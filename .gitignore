@@ -1,0 +1,23 @@
+# Build output
+build/
+*/build/
+
+# Demo executables and debug output
+/01_basics/*.exe
+/02_parsing/*.exe
+/03_foreach/*.exe
+*.ilk
+*.pdb
+*.obj
+*.diag.txt
+
+# Generated Mverse sidecars
+*.srcmap
+*.srcnav
+compile_commands.json
+
+# Local editor/system files
+.vs/
+.vscode/
+.DS_Store
+Thumbs.db
