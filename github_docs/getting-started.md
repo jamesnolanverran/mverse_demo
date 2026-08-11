@@ -7,14 +7,14 @@ The fastest way to understand Mverse is to run a demo and open the generated C.
 Mverse currently expects:
 
 - Windows.
-- `clang-cl` available in a Visual Studio Developer Command Prompt.
+- `clang-cl` available on your `PATH`.
 
 The repository can be browsed from WSL, but the demo build scripts are Windows
 batch files.
 
 ## Run The First Demo
 
-Open a Visual Studio Developer Command Prompt:
+From a Windows shell where `clang-cl` is available:
 
 ```bat
 cd D:\dev\mverse\demo\01_basics
@@ -38,6 +38,11 @@ The first demo defines a timing macro and calls it with a block:
 
 After the build, look in `build\main.c`. That file is the generated C that
 `clang-cl` compiled.
+
+You can debug that generated C like ordinary native code. To debug the authored
+Mverse source instead, use the experimental
+[RAD Debugger fork](https://github.com/jamesnolanverran/raddebugger), which
+reads the source-map files Mverse writes.
 
 ## Run The Other Demos
 

@@ -1,8 +1,7 @@
 # Demo
 
 These examples show the currently working Mverse language. They are intended to
-be run from Windows in a Visual Studio Developer Command Prompt, with
-`clang-cl` available.
+be run from Windows with `clang-cl` available on your `PATH`.
 
 ## Run
 
@@ -34,6 +33,11 @@ batch file invokes the `mverse.exe` in the parent project directory.
 Mverse writes generated C and object files under each demo's `build\` folder.
 It also writes the executable and the source-map CSV files in the demo
 directory.
+
+You can debug the generated C directly with any normal native debugger. If you
+want the debugger to show authored Mverse source instead, try the experimental
+[RAD Debugger fork](https://github.com/jamesnolanverran/raddebugger), which
+reads Mverse `.srcmap` and `.srcnav` files.
 
 The project is pre-alpha. The examples show implemented behavior, but the
 language is still changing.

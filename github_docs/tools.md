@@ -29,8 +29,13 @@ Where is @measure_time defined?
 
 ## RAD Debugger
 
-This project has been tested with a modified build of RAD Debugger that reads
-Mverse source maps.
+You can debug the generated C with ordinary native debugger behavior: open the
+demo executable, use the PDB, and step through the generated `build\` files.
+
+For authored-source debugging, this project has been tested with a modified
+build of [RAD Debugger](https://github.com/jamesnolanverran/raddebugger) that
+reads Mverse source maps. The broader source-map experiment is described in
+[native source maps](https://github.com/jamesnolanverran/native_source_maps).
 
 With the matching RAD build, you can debug at the Mverse level:
 

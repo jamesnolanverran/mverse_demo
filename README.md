@@ -5,8 +5,8 @@ Mverse is a small experimental macro system for C.
 You write C, add `@` macros where a bit of repetition or shape would help, and
 Mverse expands those macros into ordinary C before compiling with `clang-cl`.
 
-Mverse is currently Windows-only. The demos expect `clang-cl` from a Visual
-Studio Developer Command Prompt.
+Mverse is currently Windows-only. The demos expect `clang-cl` to be available
+on your `PATH`.
 
 Start with this:
 
@@ -42,8 +42,8 @@ language:
 - `03_foreach`: named arguments, default values, and the extra C block needed
   when a macro declares locals.
 
-From `D:\dev\mverse\demo`, run them in a Visual Studio Developer Command
-Prompt:
+From `D:\dev\mverse\demo`, run them from any Windows shell where `clang-cl` is
+available:
 
 ```bat
 cd 01_basics
@@ -58,6 +58,13 @@ build.bat
 
 Each demo writes generated C under its own `build\` folder, plus source-map
 files for debugger and editor tooling.
+
+You can debug the expanded C with any normal native debugger by opening the
+demo executable and its generated `build\main.c`. To debug the authored Mverse
+source instead, use the experimental
+[RAD Debugger fork](https://github.com/jamesnolanverran/raddebugger), which
+reads the `.srcmap` and `.srcnav` files. The source-map experiment is described
+in [native source maps](https://github.com/jamesnolanverran/native_source_maps).
 
 For the full demo notes, see [Demo](github_docs/demo.md).
 
