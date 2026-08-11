@@ -1,2 +1,2 @@
 @echo off
-..\..\mverse.exe
+..\mverse.exe
