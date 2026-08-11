@@ -66,6 +66,15 @@ source instead, use the experimental
 reads the `.srcmap` and `.srcnav` files. The source-map experiment is described
 in [native source maps](https://github.com/jamesnolanverran/native_source_maps).
 
+For example, after building `01_basics`:
+
+```bat
+D:\dev\raddebugger\build\raddbg.exe --source-map:basics.srcmap basics.exe
+```
+
+Put `--source-map` before the executable name. RAD will use the matching
+`basics.srcnav` file automatically when it is next to `basics.srcmap`.
+
 For the full demo notes, see [Demo](github_docs/demo.md).
 
 ## Where To Go

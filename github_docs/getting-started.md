@@ -44,6 +44,12 @@ Mverse source instead, use the experimental
 [RAD Debugger fork](https://github.com/jamesnolanverran/raddebugger), which
 reads the source-map files Mverse writes.
 
+For `01_basics`, that looks like:
+
+```bat
+D:\dev\raddebugger\build\raddbg.exe --source-map:basics.srcmap basics.exe
+```
+
 ## Run The Other Demos
 
 From `D:\dev\mverse\demo`:

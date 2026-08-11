@@ -37,6 +37,16 @@ build of [RAD Debugger](https://github.com/jamesnolanverran/raddebugger) that
 reads Mverse source maps. The broader source-map experiment is described in
 [native source maps](https://github.com/jamesnolanverran/native_source_maps).
 
+After building `01_basics`, run the fork with the source map before the target
+executable:
+
+```bat
+D:\dev\raddebugger\build\raddbg.exe --source-map:basics.srcmap basics.exe
+```
+
+If `basics.srcnav` is next to `basics.srcmap`, RAD will pick it up
+automatically.
+
 With the matching RAD build, you can debug at the Mverse level:
 
 - breakpoints in authored source instead of generated `build\` files;
