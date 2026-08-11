@@ -75,8 +75,6 @@ D:\dev\raddebugger\build\raddbg.exe --source-map:basics.srcmap basics.exe
 Put `--source-map` before the executable name. RAD will use the matching
 `basics.srcnav` file automatically when it is next to `basics.srcmap`.
 
-For the full demo notes, see [Demo](github_docs/demo.md).
-
 ## Where To Go
 
 - [Getting Started](github_docs/getting-started.md): run the demos and see what
