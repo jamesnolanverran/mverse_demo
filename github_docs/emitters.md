@@ -80,8 +80,14 @@ The native form is:
 }
 ```
 
-The interpolation scanner is intentionally simple right now. It stops at the
-first `}`, so keep `%{...}` expressions free of nested braces.
+An interpolation starts with `%{` and closes at its matching outer `}`. Mverse
+tracks braces, strings, character literals, and comments inside the expression,
+so C compound literals and other nested braces are safe. Nested interpolations
+are not supported.
+
+If literal template text needs a `}` that would otherwise end the surrounding
+`@emit` body, write `\}`. Mverse keeps it as a literal closing brace in the
+emitted text.
 
 ## Why `@def_emit` Exists
 

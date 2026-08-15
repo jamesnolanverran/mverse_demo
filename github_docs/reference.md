@@ -45,6 +45,9 @@ Supported parameter forms:
 Defaults must follow required parameters. A trailing vararg parameter captures
 remaining arguments and exposes `$va_count`.
 
+A macro may declare up to 32 fixed parameters. Definitions that exceed that
+limit are rejected.
+
 ## Macro Calls
 
 Supported call forms:
@@ -110,8 +113,9 @@ Native `@emit` form:
 emitter macros to compose.
 
 Inside an emitter body, literal text is captured as output text and
-`%{expression}` inserts a C expression. The interpolation scanner stops at the
-first `}`.
+`%{expression}` inserts a C expression. Its closing `}` is recognized only
+after nested C braces have closed; strings, character literals, and comments
+are also ignored while scanning. Nested interpolations are not supported.
 
 ## Imports
 
@@ -150,14 +154,9 @@ Mverse is not a hygienic macro system or complete C parser. Current limitations
 include:
 
 - No recursion or cycle detection for macros.
-- Fixed maximum parameter storage of 32 entries.
 - Typed parameter names are generated as `_name` and are not automatically
   unique.
 - Substitution is primarily textual.
-- Named-argument detection can be confused by unusual expressions containing
-  `=`.
 - `$body` is the supported block mechanism; there are no first-class
   block-valued parameters.
 - Type metadata used by protocol and array generation is early and limited.
-- Extra positional arguments to ordinary non-vararg macros can currently be
-  ignored instead of reported as errors.
