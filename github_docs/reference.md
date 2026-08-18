@@ -68,7 +68,8 @@ with named call arguments.
 
 Supported substitutions:
 
-- `$parameter`: replace a named parameter.
+- `$parameter`: replace a named parameter. Typed parameters use the same
+  spelling; Mverse substitutes their generated `_parameter` local.
 - `$body`: replace the call-site block.
 - `$va_count`: number of captured variable arguments.
 - `$vararg_name`: captured variable-argument text.
@@ -93,7 +94,7 @@ statement-shaped:
 
 ```c
 @def(show(value:int)) {
-    printf("%d\n", _value);
+    printf("%d\n", $value);
 }
 ```
 

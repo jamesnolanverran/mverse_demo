@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 @def(foreach_line(content: char*)) {
-    char* _p = _content;
+    char* _p = $content;
     while (*_p) {
         char* _line_start = _p;
         while (*_p && *_p != '\n') {

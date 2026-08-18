@@ -9,7 +9,7 @@ Define a macro with `@def`:
     clock_t _start = clock();
     $body
     clock_t _end = clock();
-    printf("%s took %f seconds\n", _label,
+    printf("%s took %f seconds\n", $label,
            (double)(_end - _start) / CLOCKS_PER_SEC);
 }
 ```
@@ -24,9 +24,9 @@ Call it like this:
 
 The call-site block is substituted where the macro body says `$body`.
 
-Because `label` is typed as `char*`, Mverse creates a local variable named
-`_label` in the generated C. That means the expression passed as `label` is
-evaluated once.
+Macro parameters are always referenced as `$name` in a definition. Because
+`label` is typed as `char*`, Mverse evaluates its argument once, creates a local
+named `_label` in the generated C, and substitutes `$label` with that local.
 
 Conceptually, the expansion has this shape:
 
@@ -102,7 +102,7 @@ Typed parameters can have defaults too:
 
 ```c
 @def(retry(count:int=3)) {
-    for (int _i = 0; _i < _count; ++_i) {
+    for (int _i = 0; _i < $count; ++_i) {
         $body
     }
 }

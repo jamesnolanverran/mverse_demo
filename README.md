@@ -15,7 +15,7 @@ Start with this:
     clock_t _start = clock();
     $body
     clock_t _end = clock();
-    printf("%s took %f seconds\n", _label,
+    printf("%s took %f seconds\n", $label,
            (double)(_end - _start) / CLOCKS_PER_SEC);
 }
 
@@ -25,8 +25,9 @@ Start with this:
 ```
 
 That is the basic bargain. `@def` creates a macro. `$body` is replaced by the
-block you pass at the call site. The typed `label:char*` argument is evaluated
-once and stored in a generated local named `_label`.
+block you pass at the call site. Parameters are referenced with `$name`, typed
+or not. Because `label:char*` is typed, its argument is evaluated once and
+`$label` becomes a generated local named `_label`.
 
 The result is still C. Mverse is not trying to hide C from you. It is trying to
 give you a few well-placed tools for writing the C you meant to write.

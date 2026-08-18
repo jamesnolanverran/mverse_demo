@@ -46,11 +46,12 @@ Typed parameters are useful when an argument should be evaluated once:
 
 ```c
 @def(show(value:int)) {
-    printf("%d\n", _value);
+    printf("%d\n", $value);
 }
 ```
 
-Mverse creates a local named `_value`:
+The definition still references a typed parameter as `$value`. Mverse creates
+a local named `_value` and substitutes that generated name:
 
 ```c
 {

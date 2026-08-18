@@ -5,7 +5,7 @@
     clock_t _start = clock();
     $body
     clock_t _end = clock();
-    printf("%s took %f seconds\n", _label, (double)(_end - _start) / CLOCKS_PER_SEC);
+    printf("%s took %f seconds\n", $label, (double)(_end - _start) / CLOCKS_PER_SEC);
 }
 
 void do_heavy_math() {
