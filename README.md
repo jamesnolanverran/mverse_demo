@@ -92,6 +92,8 @@ Put `--source-map` before the executable name. RAD will use the matching
   `.srcmap`, and `.srcnav`.
 - [Reference](github_docs/reference.md): the compact rules and current
   limitations.
+- [C Type Integration](github_docs/type-integration.md): fine print and escape
+  hatches for external types, aliases, wrappers, and conditional declarations.
 
 Mverse is pre-alpha software. There will be bugs. Feel free to play with it and
 let me know what you think.

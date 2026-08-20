@@ -98,6 +98,22 @@ those rows need to live in code Mverse sees during the project build. A
 precompiled object file can still link normally, but it cannot add new protocol
 implementations to the generated `_Generic` macro.
 
+If a protocol uses a type declared only by a traditional C include, register
+that spelling explicitly instead of asking Mverse to parse the external include
+tree:
+
+```c
+#include <third_party.h>
+@external_type(ThirdPartyType)
+@impl(to_str, ThirdPartyType, third_party_to_str)
+```
+
+The include remains responsible for the declaration. Mverse merely accepts the
+spelling and leaves validation to the C compiler.
+
+For external aliases and conditional declarations, see the
+[C Type Integration fine print](type-integration.md).
+
 ## Dynamic Arrays
 
 The dynamic-array generator is built on the same collection-and-generation

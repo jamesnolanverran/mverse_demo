@@ -26,6 +26,19 @@ The current flow is:
 `build.conf` is required in the current directory. Paths are currently
 interpreted relative to the directory where Mverse is run.
 
+## Expansion Recursion
+
+Mverse rejects an active macro invocation that repeats with the same macro,
+argument text, and call-site block. The error includes an expansion trace.
+Finite nesting remains valid when the arguments or block differ.
+
+Changing recursion is protected by a maximum active expansion depth of 128. A
+custom Mverse build can override the limit with
+`/DMVERSE_MAX_EXPANSION_DEPTH=<number>` when compiling `mverse.exe`; compiler
+flags for the generated target do not alter a prebuilt Mverse executable.
+
+Import deduplication is separate and is not treated as macro recursion.
+
 ## Macro Definitions
 
 ```c
@@ -128,6 +141,33 @@ Mverse searches configured `mverse_include_paths` and current source paths.
 Imported files are processed during macro collection. Generated imported
 headers are written under `build\` and included from generated C.
 
+## External C Types
+
+```c
+#include <third_party.h>
+@external_type(ThirdPartyType)
+```
+
+`@external_type` tells Mverse that an ordinary C include supplies a type needed
+by generated protocol or array code. It does not declare, parse, or reproduce
+the type; the C compiler checks that the include actually provides it.
+
+The accepted forms are:
+
+```c
+@external_type(ThirdPartyType)
+@external_type(struct ThirdPartyType)
+@external_type(union ThirdPartyType)
+```
+
+Register the base name once; pointer uses of that type are then accepted as
+well. Enum tags and more complicated declaration spellings are not currently
+supported by this macro.
+
+The ordinary path ends there. External aliases, repeated typedef assertions,
+wrapper types, and the unresolved `#if` questions are documented separately in
+the [C Type Integration fine print](type-integration.md).
+
 ## Native Macros Included By This Build
 
 Core Mverse features:
@@ -138,6 +178,7 @@ Core Mverse features:
 - `@import`
 - `@impl`
 - `@emit_protocol`
+- `@external_type`
 
 Other included features:
 
@@ -154,7 +195,6 @@ host can register a different set.
 Mverse is not a hygienic macro system or complete C parser. Current limitations
 include:
 
-- No recursion or cycle detection for macros.
 - Typed parameter names are generated as `_name` and are not automatically
   unique.
 - Substitution is primarily textual.
