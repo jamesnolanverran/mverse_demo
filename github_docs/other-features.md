@@ -1,7 +1,59 @@
 # Other Features
 
-This page covers a few features just past everyday `@def` macros: vararg
-mapping, protocol-like dispatch, and dynamic-array generation.
+This page covers a few features just past everyday `@def` macros: enum
+declarations, vararg mapping, protocol-like dispatch, and dynamic-array
+generation.
+
+## Enums With String Names
+
+Import the enum convenience from jlibs, then declare the enum once:
+
+```c
+@import("enum/enum.h")
+
+@enum(Color) {
+    COLOR_RED,
+    COLOR_GREEN = 10,
+    COLOR_BLUE = 20,
+}
+```
+
+This emits the ordinary C enum and a header-safe conversion function:
+
+```c
+Str name = to_str_from_Color(COLOR_GREEN);
+```
+
+The returned text is the exact enumerator name, such as `"COLOR_GREEN"`. An
+unknown value returns `"<unknown Color>"`.
+
+Enumerator values may be implicit or use ordinary C integer constant
+expressions. The expressions remain C: Mverse preserves them and the compiler
+validates and evaluates them. A trailing comma and comments are allowed.
+
+Mverse enums require unique values. The generated conversion has one result
+for each value, so aliases such as two names both equal to `7` are rejected by
+the C compiler. If aliases are important, use an ordinary C enum and define the
+desired conversion behavior yourself.
+
+The generated function is `static inline`, so an `@enum` declaration may live
+in a header included by several translation units.
+
+The converter is intentionally called directly. Adding an enum to a shared
+`_Generic` protocol table can conflict with the integer type that C considers
+compatible with that enum. Direct `to_str_from_Color(value)` calls avoid that
+ambiguity.
+
+`enum/enum.h` imports the `Str` definitions it needs. Configure the jlibs root
+as both an Mverse import path and a compiler include path, for example:
+
+```text
+mverse_include_paths = path/to/jlibs
+include_path = /Ipath/to/jlibs
+```
+
+Combined flag formatting and conditional enumerator lists are not part of this
+initial helper.
 
 ## Vararg Mapping
 

@@ -177,6 +177,31 @@ The ordinary path ends there. External aliases, repeated typedef assertions,
 wrapper types, and the unresolved `#if` questions are documented separately in
 the [C Type Integration fine print](type-integration.md).
 
+## Enum Convenience
+
+With the jlibs root configured as an Mverse and compiler include path:
+
+```c
+@import("enum/enum.h")
+
+@enum(Status) {
+    STATUS_READY,
+    STATUS_BUSY = 10,
+    STATUS_DONE = 20,
+}
+```
+
+This emits `Status` and the header-safe function
+`to_str_from_Status(Status)`. Known values return their exact enumerator name;
+unknown values return `"<unknown Status>"`.
+
+Each entry is an identifier with an optional C value expression. Values must
+resolve uniquely because the generated conversion has one name per value. Flag
+formatting and conditional enumerator lists are not currently supported.
+
+Call the generated function directly. Registering an enum in a `_Generic`
+protocol can conflict with its compatible C integer type.
+
 ## Native Macros Included By This Build
 
 Core Mverse features:
