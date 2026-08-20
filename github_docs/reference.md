@@ -39,6 +39,15 @@ flags for the generated target do not alter a prebuilt Mverse executable.
 
 Import deduplication is separate and is not treated as macro recursion.
 
+### Repeated evaluation warning
+
+If an untyped parameter is substituted more than once, Mverse warns at the
+macro call when its argument contains an apparent call, assignment, increment,
+or decrement. The check ignores strings, character literals, and comments. It
+is a useful lexical warning, not a promise that Mverse understands all C side
+effects. Typed parameters are evaluated once into generated locals and are not
+subject to the warning.
+
 ## Macro Definitions
 
 ```c

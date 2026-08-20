@@ -113,3 +113,10 @@ Use these shapes:
 
 Mverse is intentionally not hygienic yet. Choose internal names that are
 unlikely to collide, and add a C block when a macro owns local variables.
+
+There is a second reason to choose a typed parameter: evaluation count. An
+untyped argument is copied wherever `$name` appears, so two substitutions can
+evaluate a call twice. Mverse warns at the invocation when it sees repeated
+substitution together with obvious side-effect syntax such as a call,
+assignment, `++`, or `--`. Typed parameters evaluate their argument once into
+the generated local and do not produce this warning.
