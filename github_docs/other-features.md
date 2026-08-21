@@ -137,8 +137,11 @@ forward-declared structs through pointers. Import-scoped expansion at each call
 site remains a possible future design if the lvalue requirement or global
 tables prove limiting in practice.
 
-The implementation functions must be declared where the generated call is
-compiled, just as with an ordinary C function call.
+Each implementation must have the protocol return type and accept one argument
+of its registered type. Mverse emits a compile-time signature check so the cast
+inside the dispatch table cannot hide an incompatible function declaration.
+The functions must be declared where the generated protocol code is compiled,
+just as with ordinary C function calls.
 
 Named views and explicit authored-type selection use the same call syntax:
 
