@@ -6,6 +6,7 @@ build/
 /01_basics/*.exe
 /02_parsing/*.exe
 /03_foreach/*.exe
+/04_protocols/*.exe
 *.ilk
 *.pdb
 *.obj

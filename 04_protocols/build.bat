@@ -1,0 +1,2 @@
+@echo off
+..\mverse.exe

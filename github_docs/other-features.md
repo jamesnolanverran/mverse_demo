@@ -60,16 +60,16 @@ initial helper.
 `@map_args` is specifically for vararg text.
 
 When a macro captures `args...`, those arguments are available as text. A common
-next move is to wrap each captured argument in the same function.
+next move is to wrap each captured argument in the same ordinary C function.
 
 ```c
-@map_args("a, b, c", to_str)
+@map_args("a, b, c", encode_arg)
 ```
 
 expands conceptually to:
 
 ```c
-to_str(a), to_str(b), to_str(c)
+encode_arg(a), encode_arg(b), encode_arg(c)
 ```
 
 The first argument is the captured vararg text, shown here in quotes to make the
@@ -78,20 +78,20 @@ text boundary visible. The final argument is the wrapper.
 This is not runtime iteration. It does not walk an array, split a string, or
 inspect values. It operates on macro argument text at expansion time.
 
-One common use is a vararg macro:
+For example, a vararg macro can apply a normal conversion function to every
+argument:
 
 ```c
-@def(outf(fmt, args...)) {
-    parse_output(
-        to_str($fmt),
-        (Str[]) { @map_args($args, to_str) },
+@def(write_all(args...)) {
+    write_values(
+        (Value[]) { @map_args($args, encode_arg) },
         $va_count
-    )
+    );
 }
 ```
 
 Here `$args` is the captured vararg text, and `@map_args` turns each argument
-inside that text into a `to_str(...)` expression.
+inside that text into an `encode_arg(...)` expression.
 
 ## Protocol Dispatch
 
@@ -113,36 +113,44 @@ The useful version looks like this:
 
 Each `@impl` says: for this operation, this C type is handled by this C
 function. `@emit_protocol` collects the implementations Mverse has seen and
-writes a C11 `_Generic` dispatch macro.
-
-That turns into code with this shape:
+creates the `@to_str(...)` protocol call:
 
 ```c
-#define to_str(x) \
-_Generic((x), \
-    CharArr: (Str (*)(CharArr))str_impl_char_array, \
-    int: (Str (*)(int))str_impl_int, \
-    int*: (Str (*)(int*))str_impl_int_ptr, \
-    unsigned long: (Str (*)(unsigned long))str_impl_ulong, \
-    char*: (Str (*)(char*))str_impl_char, \
-    Str: (Str (*)(Str))str_impl_str, \
-    Str*: (Str (*)(Str*))str_impl_str_ptr, \
-    StrView: (Str (*)(StrView))str_impl_str_view \
-)(x)
+int number = 42;
+Str text = @to_str(number);
 ```
 
-So if the string definitions are imported, the codebase can grow a generic
-`to_str(...)` operation one implementation at a time.
+If the string definitions are imported, the codebase can grow the operation one
+implementation at a time.
 
 The split is pleasantly boring:
 
-- Mverse collects the `@impl` rows and writes the `_Generic` macro.
+- Mverse collects the `@impl` rows and writes the C11 type-selection code.
 - C chooses the implementation from the expression type.
 - There is no runtime type system.
 
-The generated macro still follows ordinary C rules. The implementation
-functions need to be declared where the generated call is compiled, just as they
-would if you wrote the `_Generic` macro by hand.
+The current implementation uses the address of the argument for type selection.
+Automatic protocol calls therefore require an addressable lvalue, normally a
+named variable. Character-array lvalues, including string literals, retain the
+usual string conversion behavior. This lets the generated table safely mention
+forward-declared structs through pointers. Import-scoped expansion at each call
+site remains a possible future design if the lvalue requirement or global
+tables prove limiting in practice.
+
+The implementation functions must be declared where the generated call is
+compiled, just as with an ordinary C function call.
+
+Named views and explicit authored-type selection use the same call syntax:
+
+```c
+Str normal = @to_str(size);
+Str width = @to_str(size, view=width);
+Str exact = @to_str(code, as=ErrorCode);
+```
+
+Prefer the `@` spelling in Mverse code, particularly when using `as=` or
+`view=`. The generated ordinary `to_str(value)` C spelling also works for
+automatic default dispatch and has the same lvalue requirement.
 
 There is one practical catch: protocol collection happens while Mverse is
 processing source and imported headers. If a library contributes `@impl` rows,

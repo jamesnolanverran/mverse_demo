@@ -34,7 +34,7 @@ give you a few well-placed tools for writing the C you meant to write.
 
 ## Demo
 
-The demo folder contains three small examples of the currently working Mverse
+The demo folder contains four small examples of the currently working Mverse
 language:
 
 - `01_basics`: a typed macro with a `$body` block.
@@ -42,6 +42,8 @@ language:
   body.
 - `03_foreach`: named arguments, default values, and the extra C block needed
   when a macro declares locals.
+- `04_protocols`: register implementations for ordinary C types and select the
+  correct function with an `@` protocol call.
 
 From `D:\dev\mverse\demo`, run them from any Windows shell where `clang-cl` is
 available:
@@ -54,6 +56,9 @@ cd ..\02_parsing
 build.bat
 
 cd ..\03_foreach
+build.bat
+
+cd ..\04_protocols
 build.bat
 ```
 

@@ -85,10 +85,9 @@ selection:
 ```
 
 An opaque `@external_type(ExtErrCode)` does not reveal that relationship. If a
-protocol registers both `int` and the external alias in the same view, ordinary
+protocol registers both `int` and the external alias in the same view,
 automatic `_Generic` dispatch can therefore produce a compiler error. An
-explicit Mverse call with `as=` selects its exact registration directly, but it
-does not make the ambiguous ordinary C dispatch table generally usable.
+explicit Mverse call with `as=` selects its exact registration directly.
 
 For a simple external alias, C itself provides a useful assertion.
 
