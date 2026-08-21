@@ -20,17 +20,34 @@ Start with this:
 }
 
 @measure_time("heavy work") {
+    // This block replaces $body in measure_time.
     do_heavy_math();
 }
 ```
 
-That is the basic bargain. `@def` creates a macro. `$body` is replaced by the
-block you pass at the call site. Parameters are referenced with `$name`, typed
-or not. Because `label:char*` is typed, its argument is evaluated once and
-`$label` becomes a generated local named `_label`.
+`@def` creates a macro. `$body` is replaced by the block you pass at the call
+site. Parameters are referenced with `$name`, typed or not. Because
+`label:char*` is typed, its argument is evaluated once and `$label` becomes a
+generated local named `_label`.
 
-The result is still C. Mverse is not trying to hide C from you. It is trying to
-give you a few well-placed tools for writing the C you meant to write.
+Mverse expands the call above into ordinary C with this shape:
+
+```c
+{
+    char *_label = "heavy work";
+    clock_t _start = clock();
+
+    // This block replaces $body in measure_time.
+    do_heavy_math();
+
+    clock_t _end = clock();
+    printf("%s took %f seconds\n", _label,
+           (double)(_end - _start) / CLOCKS_PER_SEC);
+}
+```
+
+The generated output is ordinary C and can be inspected under the demo's
+`build` directory.
 
 ## Demo
 

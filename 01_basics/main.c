@@ -19,6 +19,7 @@ int main() {
     printf("Starting Basics Demo...\n");
 
     @measure_time("Heavy Math Loop") {
+        // This block replaces $body in measure_time.
         printf("  Inside the block!\n");
         do_heavy_math();
     }
