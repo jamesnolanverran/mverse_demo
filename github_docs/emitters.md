@@ -22,7 +22,7 @@ Now define a friendly Mverse wrapper:
 
 ```c
 @def_emit(printc(prefix)) {
-    @emit(print_strings, Str, to_str) {
+    @emit(print_strings, Str, @to_str) {
         %{$prefix}$body
     }
 }
@@ -49,20 +49,18 @@ You can write quotes and punctuation naturally:
 No backslash maze. The text stays readable, and syntax highlighters often do a
 reasonable job because the body still looks like the thing you are producing.
 
-Conceptually, the first call becomes ordinary C:
+Conceptually, Mverse applies the requested protocol conversion to every
+segment before passing the resulting array to `print_strings`:
 
 ```c
-print_strings((Str[]) {
-    to_str("message: "),
-    to_str("Hello, "),
-    to_str(name),
-    to_str("!\n")
-}, 4);
+@to_str("message: ")
+@to_str("Hello, ")
+@to_str(name)
+@to_str("!\n")
 ```
 
-The source reads like the output you wanted, while the generated C still calls
-plain C functions. It feels like a small template, but it compiles as ordinary
-C.
+The source reads like the output you wanted, and the generated result remains
+ordinary C.
 
 ## Literal Text And Interpolation
 
@@ -70,7 +68,7 @@ Inside an `@emit` body:
 
 - Write literal text as itself.
 - Use `%{expression}` to insert a C expression.
-- Let the wrapper, such as `to_str`, convert each piece before output.
+- Let the wrapper, such as `@to_str`, convert each piece before output.
 
 The native form is:
 
@@ -100,7 +98,7 @@ For example, an HTML-shaped layer can be built out of smaller emitters:
 
 ```c
 @def_emit(html()) {
-    @emit(write_segments, Str, to_str, html_encode) {
+    @emit(write_segments, Str, @to_str, html_encode) {
         $body
     }
 }
