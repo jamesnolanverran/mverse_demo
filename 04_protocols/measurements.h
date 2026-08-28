@@ -19,6 +19,5 @@ static int measurement_from_distance(Distance value) {
 
 @impl(measurement, Temperature, measurement_from_temperature)
 @impl(measurement, Distance, measurement_from_distance)
-@emit_protocol(int, measurement)
 
 #endif

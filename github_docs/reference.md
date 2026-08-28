@@ -211,7 +211,6 @@ Core Mverse features:
 - `@emit`
 - `@import`
 - `@impl`
-- `@emit_protocol`
 - `@external_type`
 
 Other included features:

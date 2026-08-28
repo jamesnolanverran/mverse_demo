@@ -60,10 +60,10 @@ initial helper.
 `@map_args` is specifically for vararg text.
 
 When a macro captures `args...`, those arguments are available as text. A common
-next move is to wrap each captured argument in the same ordinary C function.
+next move is to map each captured argument through the same operation.
 
 ```c
-@map_args("a, b, c", encode_arg)
+@map_args(a, b, c, encode_arg)
 ```
 
 expands conceptually to:
@@ -72,8 +72,10 @@ expands conceptually to:
 encode_arg(a), encode_arg(b), encode_arg(c)
 ```
 
-The first argument is the captured vararg text, shown here in quotes to make the
-text boundary visible. The final argument is the wrapper.
+The final argument is the mapper name. A bare name always produces ordinary C
+calls as shown above. Prefixing it with `@` explicitly requests a registered
+Mverse macro. For example, `@map_args(6, make_value(), @to_str)` applies the
+visibility-aware `@to_str(...)` protocol call to both rvalues.
 
 This is not runtime iteration. It does not walk an array, split a string, or
 inspect values. It operates on macro argument text at expansion time.
@@ -107,13 +109,11 @@ The useful version looks like this:
 @impl(to_str, Str, str_impl_str)
 @impl(to_str, Str*, str_impl_str_ptr)
 @impl(to_str, StrView, str_impl_str_view)
-
-@emit_protocol(Str, to_str)
 ```
 
 Each `@impl` says: for this operation, this C type is handled by this C
-function. `@emit_protocol` collects the implementations Mverse has seen and
-creates the `@to_str(...)` protocol call:
+function. The first `@impl` for a protocol introduces its callable
+`@to_str(...)` macro; each later `@impl` adds another implementation:
 
 ```c
 int number = 42;
@@ -129,19 +129,17 @@ The split is pleasantly boring:
 - C chooses the implementation from the expression type.
 - There is no runtime type system.
 
-The current implementation uses the address of the argument for type selection.
-Automatic protocol calls therefore require an addressable lvalue, normally a
-named variable. Character-array lvalues, including string literals, retain the
-usual string conversion behavior. This lets the generated table safely mention
-forward-declared structs through pointers. Import-scoped expansion at each call
-site remains a possible future design if the lvalue requirement or global
-tables prove limiting in practice.
+Native protocol calls select directly on the expression, so named variables,
+literals, and function results all work. At each call, Mverse includes only
+the implementations visible through imports that appear before it. An
+unrelated by-value struct registered elsewhere therefore does not need to be
+complete at this call site.
 
-Each implementation must have the protocol return type and accept one argument
-of its registered type. Mverse emits a compile-time signature check so the cast
-inside the dispatch table cannot hide an incompatible function declaration.
-The functions must be declared where the generated protocol code is compiled,
-just as with ordinary C function calls.
+The generated dispatcher names each implementation function directly, so the
+selected call has the real type of that function. C checks the selected call
+in its actual use context; implementations may return different types. The
+functions must be declared where the generated protocol code is compiled, just
+as with ordinary C function calls.
 
 Named views and explicit authored-type selection use the same call syntax:
 
@@ -151,9 +149,11 @@ Str width = @to_str(size, view=width);
 Str exact = @to_str(code, as=ErrorCode);
 ```
 
-Prefer the `@` spelling in Mverse code, particularly when using `as=` or
-`view=`. The generated ordinary `to_str(value)` C spelling also works for
-automatic default dispatch and has the same lvalue requirement.
+Protocol calls use the Mverse spelling, such as `@to_str(value)`.
+
+The string library keeps protocol conversion and template collection distinct:
+`@to_str(value)` is protocol dispatch, while `@to_string(result){...}` is the
+body emitter. Mverse rejects macro, protocol, and emitter name collisions.
 
 There is one practical catch: protocol collection happens while Mverse is
 processing source and imported headers. If a library contributes `@impl` rows,
