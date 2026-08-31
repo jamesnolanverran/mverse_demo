@@ -5,26 +5,40 @@ syntax it accepts, and where the edges are.
 
 ## Build Flow
 
-Mverse is currently Windows-only and builds generated C with `clang-cl`.
+Mverse is currently Windows-only. It expands C but does not compile or link it;
+the surrounding batch file or build system owns those steps.
 
-Run Mverse from a directory containing `build.conf`:
+Expand one or more authored sources with:
 
 ```text
-mverse.exe
+mverse.exe --expand --target <external-output> [-I <mverse-import-path> ...] <source.c>...
 ```
 
 The current flow is:
 
-1. Read `build.conf`.
-2. Read configured source files and imported Mverse headers.
+1. Read positional source files and imported Mverse headers.
+2. Collect the repeatable `-I` import search paths in command-line order.
 3. Collect macro definitions and type/protocol information.
 4. Expand headers and source files.
 5. Write generated files under `build\`.
-6. Write `<program>.srcmap` and `<program>.srcnav`.
-7. Compile generated C files with `clang-cl` and link the executable.
+6. Write `<target>.srcmap` and `<target>.srcnav`.
 
-`build.conf` is required in the current directory. Paths are currently
-interpreted relative to the directory where Mverse is run.
+`--target` is required exactly once. It names the output the surrounding build
+will eventually produce and is used for provenance filenames only. `-I <path>`
+and `-I<path>` may be repeated. Remaining arguments are authored source files
+and are processed in authored order.
+
+After expansion, the surrounding build compiles and links the generated files.
+Mverse never invokes the compiler or linker. If compiler output has been
+captured to a file, remap it through the target's source map with:
+
+```text
+mverse.exe --remap-diagnostics --target <external-output> <diagnostic-log>
+```
+
+The surrounding build still owns the compiler's original exit status. A bare
+`mverse.exe` invocation fails with a usage hint and does not read `build.conf`
+or create build artifacts.
 
 ## Expansion Recursion
 
@@ -146,7 +160,7 @@ are also ignored while scanning. Nested interpolations are not supported.
 @import("path/to/file.h")
 ```
 
-Mverse searches configured `mverse_include_paths` and current source paths.
+Mverse searches the repeatable command-line `-I` paths and current source paths.
 Imported files are processed during macro collection. Generated imported
 headers are written under `build\` and included from generated C.
 

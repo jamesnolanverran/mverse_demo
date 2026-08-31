@@ -37,7 +37,8 @@ The first demo defines a timing macro and calls it with a block:
 ```
 
 After the build, look in `build\main.c`. That file is the generated C that
-`clang-cl` compiled.
+`clang-cl` compiled. There is no hidden runtime or special object format: the
+interesting part becomes C you can read with the same tools you already use.
 
 You can debug that generated C like ordinary native code. To debug the authored
 Mverse source instead, use the experimental
@@ -60,6 +61,9 @@ build.bat
 
 cd ..\03_foreach
 build.bat
+
+cd ..\04_protocols
+build.bat
 ```
 
 The demos are intentionally small:
@@ -69,51 +73,50 @@ The demos are intentionally small:
   each line.
 - `03_foreach`: default arguments, named arguments, and the extra C block used
   by statement-like macros.
+- `04_protocols`: attach behavior to ordinary C types and let an `@` call select
+  the right implementation.
 
-## The Command
+## How The Demo Build Works
 
-The command-line interface is deliberately tiny:
+You can treat `build.bat` as the whole interface while you are learning Mverse.
+It expands the source, compiles the generated C, and runs the result.
 
-```text
-mverse.exe              build ./build.conf
-mverse.exe --help       show usage
-mverse.exe --version    show version information
-```
+<details>
+<summary>See the commands and build responsibilities</summary>
 
-Run `mverse.exe` from a directory that contains `build.conf`.
-
-## Build Configuration
-
-A minimal `build.conf` looks like this:
+The command-line interface stays deliberately small:
 
 ```text
-source_files = main.c
-compiler_flags = -DDEBUG -Zi
-include_path =
-disable_warnings =
-link_flags =
-executable = demo.exe
-project_dir = .
+mverse.exe --expand --target <output.exe> [-I <mverse-import-path> ...] <source.c>...
+mverse.exe --remap-diagnostics --target <output.exe> <diagnostic-log>
+mverse.exe --help
+mverse.exe --version
 ```
 
-The most important fields are:
+For example, the first half of `01_basics\build.bat` is essentially:
 
-| Key | Purpose |
-| --- | --- |
-| `source_files` | C and header files Mverse should process. |
-| `compiler_flags` | Flags passed to `clang-cl`. |
-| `include_path` | Include flags passed to `clang-cl`. |
-| `link_flags` | Linker flags. |
-| `executable` | Output executable name. |
-| `mverse_include_paths` | Search paths for `@import`. |
-| `precompiled_objs` | Object files to include during linking. |
+```bat
+..\mverse.exe --expand --target basics.exe main.c
+clang-cl build\main.c /Fe:basics.exe
+```
 
-Paths are currently interpreted from the directory where Mverse is run. Mverse
-does not search parent directories for `build.conf`.
+`--target` tells Mverse the name of the output the surrounding build will
+produce. Mverse uses that name for `basics.srcmap` and `basics.srcnav`; it does
+not create the executable itself. Positional arguments are authored source
+files. Repeatable `-I` options add search paths for Mverse `@import` files.
+
+The compiler command is intentionally outside Mverse. Your script or build
+system owns compiler flags, libraries, linking, incremental builds, and the
+compiler's exit status. If compilation fails, the demo captures the compiler
+output and asks `--remap-diagnostics` to translate generated locations back to
+the authored source.
+
+</details>
 
 ## Generated Files
 
-Mverse writes generated C and object files under `build\`.
+Mverse writes generated C under `build\`. The demo's compiler command keeps its
+object file and diagnostic log there too.
 
 It also writes:
 
@@ -124,5 +127,5 @@ It also writes:
 Generated files are useful to inspect. They are also build output, so edit the
 source files outside `build\` and run Mverse again.
 
-For debugger and editor support built around these files, see
-[Tools](tools.md).
+For the precise command-line contract, see [Reference](reference.md). For
+debugger and editor support built around these files, see [Tools](tools.md).

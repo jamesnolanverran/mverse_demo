@@ -44,12 +44,12 @@ The converter is intentionally called directly. Adding an enum to a shared
 compatible with that enum. Direct `to_str_from_Color(value)` calls avoid that
 ambiguity.
 
-`enum/enum.h` imports the `Str` definitions it needs. Configure the jlibs root
-as both an Mverse import path and a compiler include path, for example:
+`enum/enum.h` imports the `Str` definitions it needs. Give the jlibs root to
+both Mverse and the compiler, for example:
 
-```text
-mverse_include_paths = path/to/jlibs
-include_path = /Ipath/to/jlibs
+```bat
+mverse.exe --expand --target colors.exe -I path\to\jlibs main.c
+clang-cl /Ipath\to\jlibs build\main.c /Fe:colors.exe
 ```
 
 Combined flag formatting and conditional enumerator lists are not part of this

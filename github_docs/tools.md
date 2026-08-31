@@ -72,4 +72,6 @@ It is lightweight editor support, not a language server. It currently provides:
 - indexing for native macro registrations; and
 - a generated-output indicator for files under `build\`.
 
-Open a folder containing `build.conf` and the extension activates automatically.
+Run **Mverse: Rebuild Macro Index** from the Command Palette when you want the
+navigation index refreshed. That command also activates the extension for the
+current workspace.

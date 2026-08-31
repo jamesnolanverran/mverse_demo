@@ -3,7 +3,9 @@
 Mverse is a small experimental macro system for C.
 
 You write C, add `@` macros where a bit of repetition or shape would help, and
-Mverse expands those macros into ordinary C before compiling with `clang-cl`.
+Mverse expands those macros into ordinary C. Your normal compiler handles the
+rest, so the result stays easy to inspect, debug, and fit into an ordinary C
+project.
 
 Mverse is currently Windows-only. The demos expect `clang-cl` to be available
 on your `PATH`.
@@ -79,8 +81,17 @@ cd ..\04_protocols
 build.bat
 ```
 
+Each `build.bat` does two straightforward things: it asks Mverse to expand the
+authored source, then gives the generated C to `clang-cl`. Mverse does not take
+over your compiler or linker. That small separation is what lets it slot into a
+batch file today and a larger build system later without changing how the
+language features work.
+
 Each demo writes generated C under its own `build\` folder, plus source-map
-files for debugger and editor tooling.
+files for debugger and editor tooling. If you are just exploring, that is all
+you need to know. The exact commands, generated files, and diagnostic-remapping
+flow are covered in [Getting Started](github_docs/getting-started.md) and the
+[Reference](github_docs/reference.md).
 
 You can debug the expanded C with any normal native debugger by opening the
 demo executable and its generated `build\main.c`. To debug the authored Mverse
@@ -100,8 +111,8 @@ Put `--source-map` before the executable name. RAD will use the matching
 
 ## Where To Go
 
-- [Getting Started](github_docs/getting-started.md): run the demos and see what
-  files Mverse writes.
+- [Getting Started](github_docs/getting-started.md): run the demos, look at the
+  generated C, and then read the build details when you need them.
 - [Macros By Example](github_docs/macros-by-example.md): learn `@def`, `$body`,
   parameters, defaults, named arguments, and varargs.
 - [Patterns](github_docs/patterns.md): expression macros, statement macros,
