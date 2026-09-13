@@ -119,8 +119,10 @@ Put `--source-map` before the executable name. RAD will use the matching
   scoping, and the important extra-braces rule.
 - [Emitters](github_docs/emitters.md): build output-oriented mini templates
   with `@emit`, `@def_emit`, and `%{...}` interpolation.
+- [Generic Families](github_docs/generic-families.md): write typed containers
+  with `T`, `Self`, and naming helpers, then specialize them for ordinary C types.
 - [Other Features](github_docs/other-features.md): enum declarations,
-  `@map_args`, protocol dispatch, and the current dynamic-array generator.
+  `@map_args`, and protocol dispatch.
 - [Tools](github_docs/tools.md): RAD Debugger support, the VS Code extension,
   `.srcmap`, and `.srcnav`.
 - [Reference](github_docs/reference.md): the compact rules and current

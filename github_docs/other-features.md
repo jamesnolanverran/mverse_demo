@@ -1,8 +1,7 @@
 # Other Features
 
 This page covers a few features just past everyday `@def` macros: enum
-declarations, vararg mapping, protocol-like dispatch, and dynamic-array
-generation.
+declarations, vararg mapping, protocol dispatch, and generic containers.
 
 ## Enums With String Names
 
@@ -177,30 +176,26 @@ spelling and leaves validation to the C compiler.
 For external aliases and conditional declarations, see the
 [C Type Integration fine print](type-integration.md).
 
-## Dynamic Arrays
+## Generic Containers
 
-The dynamic-array generator is built on the same collection-and-generation
-idea.
+Generic families let a library supply a primary type and its functions once,
+then specialize them for different element types. Mverse handles the repeated
+names and operation dispatch; the library supplies the ordinary C structure
+and algorithms.
 
-The current macros are:
+For example, after importing a header that specializes the `box` family from
+the [Generic Families guide](generic-families.md) for `int`:
 
 ```c
-@impl_darr(MyType)
-@emit_darr_h()
-@emit_darr_c()
+BoxInt box = {0};
+@box_set(&box, 42);
+int value = @box_get(&box);
 ```
 
-`@impl_darr(MyType)` registers a type. The emit macros generate type-specific
-array declarations and implementations.
+`BoxInt` is a normal C struct, and the operations select typed functions such
+as `box_int_set`. Library authors use `%{T}` for the element type,
+`%{Self}` for the primary type, and `@fn`/`@type` to name functions and
+supporting types.
 
-The generated API includes `_Generic` dispatch for operations such as:
-
-- `da_init`
-- `da_push`
-- `da_pop`
-- `da_peek`
-- `da_free`
-- `from_fixed`
-
-For example, registering `int` produces an `IntArr`-style type and matching
-functions behind the generic `da_*` macros.
+The [Generic Families guide](generic-families.md) walks through a complete
+small family, its specialization, and the implementation anchor.

@@ -154,6 +154,41 @@ Inside an emitter body, literal text is captured as output text and
 after nested C braces have closed; strings, character literals, and comments
 are also ignored while scanning. Nested interpolations are not supported.
 
+## Generic Families
+
+`@def_family(name)` defines a source-owned family. Its name supplies the
+specialization macro `@impl_<name>`, anchor `@<name>_impl`, type prefix, and
+function prefix. Optional naming fields override those conventions.
+
+Inside the definition:
+
+- `@family_operation(push)` declares `@<name>_push`, selecting on the first
+  positional argument's wrapper-pointer type.
+- `selector=element_pointer` instead selects on `T *` or `const T *`.
+- `options=(as)` enables explicit element-type selection for that operation.
+- `@def_family_emit(declaration)` supplies type and function declarations.
+- `@def_family_emit(definition)` supplies function definitions.
+
+Within family templates:
+
+| Form | Meaning |
+| --- | --- |
+| `%{T}` | Supplied element-type spelling |
+| `%{Self}` | Primary type name for this specialization |
+| `@fn(local)` | Specialized function identifier |
+| `@type(local)` | Auxiliary type identifier: `Self` followed by `local` |
+
+The helpers take one literal C identifier. They produce names, not declarations.
+Family interpolation inserts generation-time text, not runtime C expressions.
+
+Import the definition before use. Declare `@impl_<name>(Type)` at file scope
+in a header after declaring `Type`; `name=CustomName` overrides the generated
+type name. A call sees only earlier specializations in its own import stream.
+Each used family needs exactly one `@<name>_impl()` anchor in a target source.
+
+See [Generic Families](generic-families.md) for a complete example and the
+array and list APIs.
+
 ## Imports
 
 ```c
@@ -216,7 +251,7 @@ formatting and conditional enumerator lists are not currently supported.
 Call the generated function directly. Registering an enum in a `_Generic`
 protocol can conflict with its compatible C integer type.
 
-## Native Macros Included By This Build
+## Built-In Forms And Library Macros
 
 Core Mverse features:
 
@@ -226,16 +261,13 @@ Core Mverse features:
 - `@import`
 - `@impl`
 - `@external_type`
-
-Other included features:
-
 - `@map_args`
-- `@impl_darr`
-- `@emit_darr_h`
-- `@emit_darr_c`
+- `@def_family`
 
-Native callbacks are registered by the current executable. A different Mverse
-host can register a different set.
+Within a family definition, `@family_operation` and `@def_family_emit`
+describe its operations and templates. Importing that definition registers
+the family's specialization, anchor, and operation macros; these are supplied
+by the library rather than individually built into Mverse.
 
 ## Current Limitations
 
@@ -247,4 +279,5 @@ include:
 - Substitution is primarily textual.
 - `$body` is the supported block mechanism; there are no first-class
   block-valued parameters.
-- Type metadata used by protocol and array generation is early and limited.
+- Type metadata used by protocols and generic families is bounded; the C
+  compiler validates the generated declarations and calls.
