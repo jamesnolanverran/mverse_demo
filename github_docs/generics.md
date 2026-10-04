@@ -1,7 +1,7 @@
-# Generic Families
+# Generics
 
 A container usually has one main type, a few supporting types, and a set of
-functions that work with them. A Mverse family lets you write that code once,
+functions that work with them. A Mverse generic lets you write that code once,
 then specialize it for the element types you need.
 
 The result is ordinary typed C: structs with fields you can access directly,
@@ -9,19 +9,19 @@ functions you can call by name, and convenient `@` calls that select the right
 specialization. The aim is to keep the library code familiar and let Mverse
 handle the repeated names and dispatch.
 
-## A Small Family
+## A Small Generic
 
-Here is a complete family for a box that holds one value. Save it as `box.h`:
+Here is a complete generic for a box that holds one value. Save it as `box.h`:
 
 ```c
 #ifndef BOX_H
 #define BOX_H
 
-@def_family(box) {
-    @family_operation(set)
-    @family_operation(get)
+@def_generic(box) {
+    @generic_operation(set)
+    @generic_operation(get)
 
-    @def_family_emit(declaration) {
+    @def_generic_emit(declaration) {
         typedef struct %{Self} {
             %{T} value;
         } %{Self};
@@ -30,7 +30,7 @@ Here is a complete family for a box that holds one value. Save it as `box.h`:
         %{T} @fn(get)(%{Self} *box);
     }
 
-    @def_family_emit(definition) {
+    @def_generic_emit(definition) {
         void @fn(set)(%{Self} *box, %{T} value) {
             box->value = value;
         }
@@ -72,9 +72,9 @@ These are generation-time templates: `%{T}` and `%{Self}` insert type
 spellings, not runtime C expressions. That is different from `%{expression}`
 in an ordinary [output emitter](emitters.md).
 
-## Use The Family
+## Use The Generic
 
-Declare specializations in a header, after importing the family definition.
+Declare specializations in a header, after importing the generic definition.
 For this example, save the following as `types.h`:
 
 ```c
@@ -130,7 +130,7 @@ Most operations select a function from a pointer to `Self`. An operation can
 instead declare that it receives an element pointer:
 
 ```c
-@family_operation(
+@generic_operation(
     from_fixed,
     selector=element_pointer,
     options=(as)
@@ -139,7 +139,7 @@ instead declare that it receives an element pointer:
 
 Such an operation accepts both `T *` and `const T *` sources. When compatible
 typedef aliases make automatic selection ambiguous, `as=` names the exact
-element specialization to use. For a family `values` that declares the
+element specialization to use. For a generic `values` that declares the
 operation above, that call reads:
 
 ```c
@@ -147,11 +147,11 @@ Values values = @values_from_fixed(source, 3, as=int);
 ```
 
 `as=` belongs to operations that declare it; it is not an option on every
-family call.
+generic call.
 
 ## A Few Practical Rules
 
-- Import the family definition before specializing it, using its operations,
+- Import the generic definition before specializing it, using its operations,
   or placing its anchor. The `box` example keeps the definition in `box.h`;
   a definition can also live in its own file.
 - Put specializations at file scope in a header, after the element type is
@@ -159,10 +159,10 @@ family call.
 - A call sees specializations introduced earlier in its own import stream.
   Adding a separate source file to the target does not make its imports
   visible everywhere.
-- Each family with specializations needs exactly one implementation anchor
+- Each generic with specializations needs exactly one implementation anchor
   in the expansion target.
 - Use `name=` when a specialization needs a particular public name, such as
-  `@impl_box(int, name=BoxCount)`. Otherwise, the family supplies the name.
+  `@impl_box(int, name=BoxCount)`. Otherwise, the generic supplies the name.
 - When templates need a shared runtime header, declare it with
   `reference_header="path/to/runtime.h"` and include
   `"%{reference_header_rel}"` in the declaration template. Mverse computes
@@ -172,6 +172,6 @@ Generated declarations and implementations live under `build/mverse_gen`.
 For the box example, look for `box_int.h` and `box_impl.inc`. The owning
 header includes the declarations, and the anchor includes the implementation.
 
-Families currently specialize one element type and dispatch through a wrapper
+Generics currently specialize one element type and dispatch through a wrapper
 pointer or an element pointer. C remains responsible for checking the
 resulting types and function calls.

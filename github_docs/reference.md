@@ -154,22 +154,22 @@ Inside an emitter body, literal text is captured as output text and
 after nested C braces have closed; strings, character literals, and comments
 are also ignored while scanning. Nested interpolations are not supported.
 
-## Generic Families
+## Generics
 
-`@def_family(name)` defines a source-owned family. Its name supplies the
+`@def_generic(name)` defines a source-owned generic. Its name supplies the
 specialization macro `@impl_<name>`, anchor `@<name>_impl`, type prefix, and
 function prefix. Optional naming fields override those conventions.
 
 Inside the definition:
 
-- `@family_operation(push)` declares `@<name>_push`, selecting on the first
+- `@generic_operation(push)` declares `@<name>_push`, selecting on the first
   positional argument's wrapper-pointer type.
 - `selector=element_pointer` instead selects on `T *` or `const T *`.
 - `options=(as)` enables explicit element-type selection for that operation.
-- `@def_family_emit(declaration)` supplies type and function declarations.
-- `@def_family_emit(definition)` supplies function definitions.
+- `@def_generic_emit(declaration)` supplies type and function declarations.
+- `@def_generic_emit(definition)` supplies function definitions.
 
-Within family templates:
+Within generic templates:
 
 | Form | Meaning |
 | --- | --- |
@@ -179,14 +179,14 @@ Within family templates:
 | `@type(local)` | Auxiliary type identifier: `Self` followed by `local` |
 
 The helpers take one literal C identifier. They produce names, not declarations.
-Family interpolation inserts generation-time text, not runtime C expressions.
+Generic interpolation inserts generation-time text, not runtime C expressions.
 
 Import the definition before use. Declare `@impl_<name>(Type)` at file scope
 in a header after declaring `Type`; `name=CustomName` overrides the generated
 type name. A call sees only earlier specializations in its own import stream.
-Each used family needs exactly one `@<name>_impl()` anchor in a target source.
+Each used generic needs exactly one `@<name>_impl()` anchor in a target source.
 
-See [Generic Families](generic-families.md) for a complete example and the
+See [Generics](generics.md) for a complete example and the
 array and list APIs.
 
 ## Imports
@@ -262,11 +262,11 @@ Core Mverse features:
 - `@impl`
 - `@external_type`
 - `@map_args`
-- `@def_family`
+- `@def_generic`
 
-Within a family definition, `@family_operation` and `@def_family_emit`
+Within a generic definition, `@generic_operation` and `@def_generic_emit`
 describe its operations and templates. Importing that definition registers
-the family's specialization, anchor, and operation macros; these are supplied
+the generic's specialization, anchor, and operation macros; these are supplied
 by the library rather than individually built into Mverse.
 
 ## Current Limitations
@@ -279,5 +279,5 @@ include:
 - Substitution is primarily textual.
 - `$body` is the supported block mechanism; there are no first-class
   block-valued parameters.
-- Type metadata used by protocols and generic families is bounded; the C
+- Type metadata used by protocols and generics is bounded; the C
   compiler validates the generated declarations and calls.

@@ -178,13 +178,13 @@ For external aliases and conditional declarations, see the
 
 ## Generic Containers
 
-Generic families let a library supply a primary type and its functions once,
+Generics let a library supply a primary type and its functions once,
 then specialize them for different element types. Mverse handles the repeated
 names and operation dispatch; the library supplies the ordinary C structure
 and algorithms.
 
-For example, after importing a header that specializes the `box` family from
-the [Generic Families guide](generic-families.md) for `int`:
+For example, after importing a header that specializes the `box` generic from
+the [Generics guide](generics.md) for `int`:
 
 ```c
 BoxInt box = {0};
@@ -197,5 +197,5 @@ as `box_int_set`. Library authors use `%{T}` for the element type,
 `%{Self}` for the primary type, and `@fn`/`@type` to name functions and
 supporting types.
 
-The [Generic Families guide](generic-families.md) walks through a complete
-small family, its specialization, and the implementation anchor.
+The [Generics guide](generics.md) walks through a complete
+small generic, its specialization, and the implementation anchor.
